@@ -18,12 +18,12 @@ jobs:
         with:
           python-version: '3.11'
 
-    - name: Run AI Agent
-  run: python main.py
-  env:
-    GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}  
+      - name: Run AI Agent
+        run: python main.py
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
-      - name: Save Daily Video Plan
+      - name: Upload daily video plan
         uses: actions/upload-artifact@v4
         with:
           name: daily-video-plan
