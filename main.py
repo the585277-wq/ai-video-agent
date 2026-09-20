@@ -23,12 +23,13 @@ No copyrighted characters.
 
 url = (
     "https://generativelanguage.googleapis.com/v1beta/"
-    "models/gemini-2.5-flash:generateContent?key=" + API_KEY
+    "models/gemini-1.5-flash:generateContent?key=" + API_KEY
 )
 
 data = json.dumps({
     "contents": [{
-        "parts": [{"text": prompt}]
+        "parts": [{"text": prompt}],
+        "role": "user"
     }]
 }).encode("utf-8")
 
@@ -39,12 +40,17 @@ request = urllib.request.Request(
     method="POST"
 )
 
-with urllib.request.urlopen(request) as response:
-    result = json.loads(response.read())
+try:
+    with urllib.request.urlopen(request) as response:
+        result = json.loads(response.read())
+        content = result["candidates"][0]["content"]["parts"][0]["text"]
 
-content = result["candidates"][0]["content"]["parts"][0]["text"]
+        with open("daily_video_plan.txt", "w", encoding="utf-8") as file:
+            file.write(content)
 
-with open("daily_video_plan.txt", "w", encoding="utf-8") as file:
-    file.write(content)
-
-print("Daily AI video plan generated successfully!")
+        print("Daily AI video plan generated successfully!")
+except Exception as e:
+    print(f"Error occurred: {e}")
+    # This will print the actual error message from Google's server if it fails
+    if hasattr(e, 'read'):
+        print(e.read().decode('utf-8'))
