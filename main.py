@@ -1,7 +1,7 @@
 import os
 import urllib.request
 import json
-from datetime import datetime
+import time
 
 API_KEY = os.environ.get("GEMINI_API_KEY")
 
@@ -26,7 +26,6 @@ Duration: 30 seconds
 No copyrighted characters.
 """
 
-# Ekhane model name update kora hoyeche (gemini-3.6-flash)
 url = (
     "https://generativelanguage.googleapis.com/v1beta/"
     "models/gemini-3.6-flash:generateContent?key=" + API_KEY
@@ -46,25 +45,36 @@ request = urllib.request.Request(
     method="POST"
 )
 
-try:
-    with urllib.request.urlopen(request) as response:
-        result = json.loads(response.read())
-        content = result["candidates"][0]["content"]["parts"][0]["text"]
+# Ekhane auto-retry logic add kora hoyeche
+max_retries = 3
+for attempt in range(max_retries):
+    try:
+        with urllib.request.urlopen(request) as response:
+            result = json.loads(response.read())
+            content = result["candidates"][0]["content"]["parts"][0]["text"]
 
-        with open("daily_video_plan.txt", "w", encoding="utf-8") as file:
-            file.write(content)
+            with open("daily_video_plan.txt", "w", encoding="utf-8") as file:
+                file.write(content)
 
-        if "Part 2" in content:
-            script_part = content.split("Part 2")[1]
-            with open("daily_script.txt", "w", encoding="utf-8") as script_file:
-                script_file.write("Part 2" + script_part)
-        else:
-            with open("daily_script.txt", "w", encoding="utf-8") as script_file:
-                script_file.write("Script not found. Check full plan file.")
+            if "Part 2" in content:
+                script_part = content.split("Part 2")[1]
+                with open("daily_script.txt", "w", encoding="utf-8") as script_file:
+                    script_file.write("Part 2" + script_part)
+            else:
+                with open("daily_script.txt", "w", encoding="utf-8") as script_file:
+                    script_file.write("Script not found. Check full plan file.")
 
-        print("Daily AI video plan and script generated successfully!")
+            print("Daily AI video plan and script generated successfully!")
+            break  # Kaj sokol hole loop theke beriye jabe
+            
+    except Exception as e:
+        print(f"Attempt {attempt + 1} failed: {e}")
+        if hasattr(e, 'read'):
+            error_msg = e.read().decode('utf-8')
+            print(error_msg)
         
-except Exception as e:
-    print(f"Error occurred: {e}")
-    if hasattr(e, 'read'):
-        print(e.read().decode('utf-8'))
+        if attempt < max_retries - 1:
+            print("Server busy. Waiting 5 seconds and trying again...")
+            time.sleep(5) # 5 second wait korbe
+        else:
+            print("All attempts failed. Server is too busy right now.")
