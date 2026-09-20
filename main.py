@@ -26,8 +26,9 @@ Duration: 30 seconds
 No copyrighted characters.
 """
 
+# Ekhane v1beta theke v1 kora hoyeche
 url = (
-    "https://generativelanguage.googleapis.com/v1beta/"
+    "https://generativelanguage.googleapis.com/v1/"
     "models/gemini-1.5-flash:generateContent?key=" + API_KEY
 )
 
@@ -50,12 +51,9 @@ try:
         result = json.loads(response.read())
         content = result["candidates"][0]["content"]["parts"][0]["text"]
 
-        # Save the full response (Plan + Script)
         with open("daily_video_plan.txt", "w", encoding="utf-8") as file:
             file.write(content)
 
-        # Save only the script part for easy access
-        # (Splitting the text to find the Script section)
         if "Part 2" in content:
             script_part = content.split("Part 2")[1]
             with open("daily_script.txt", "w", encoding="utf-8") as script_file:
