@@ -26,10 +26,10 @@ Duration: 30 seconds
 No copyrighted characters.
 """
 
-# Ekhane v1beta theke v1 kora hoyeche
+# Ekhane model name update kora hoyeche
 url = (
-    "https://generativelanguage.googleapis.com/v1/"
-    "models/gemini-1.5-flash:generateContent?key=" + API_KEY
+    "https://generativelanguage.googleapis.com/v1beta/"
+    "models/gemini-2.5-flash:generateContent?key=" + API_KEY
 )
 
 data = json.dumps({
