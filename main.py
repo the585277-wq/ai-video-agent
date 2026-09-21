@@ -8,21 +8,54 @@ if not API_KEY:
     print("Error: GEMINI_API_KEY is missing!")
     exit(1)
 
-# GitHub Actions theke user er command neya hocche
 USER_COMMAND = os.environ.get("USER_PROMPT", "")
 
+# Ei prompt ta ekhon agent ke Google Flow er jonno ready kore dibe (with voice in prompt)
+default_prompt = """
+You are an expert AI Video Creator. Your job is to create a complete video production plan for a 30-second YouTube Short / TikTok / Instagram Reel.
+
+IMPORTANT: For Google Flow, you must create prompts that INCLUDE the voiceover/dialogue directly inside the prompt. Google Flow will generate the video AND the voice at the same time.
+
+Follow this exact structure:
+
+--- SECTION 1: VIDEO IDEA ---
+1. Trending Topic: (A catchy topic)
+2. Video Title: (Engaging title)
+3. Target Audience: (Who will watch this)
+
+--- SECTION 2: GOOGLE FLOW PROMPTS (With Voice) ---
+Provide 5 separate visual prompts that I can directly copy-paste into Google Flow. 
+Each prompt MUST include:
+- Visual description (Cinematic, camera angles, lighting)
+- The exact VOICEOVER TEXT or DIALOGUE that should be spoken in that scene. 
+- Format: "Prompt 1: [Visual Description] The character says: '[Exact voiceover text]'"
+- Keep each scene 3-5 seconds long.
+
+Example: 
+"Prompt 1: Close-up of a man looking at his phone with a shocked expression. He says: 'I can't believe this actually works!'"
+
+--- SECTION 3: CAPCUT EDITING GUIDE ---
+Provide a step-by-step guide on how to edit this in CapCut:
+- Order of clips
+- Recommended transitions (e.g., Zoom in, Fade)
+- Where to add text overlays
+- Music suggestion (mood/genre)
+- Best export settings
+
+--- SECTION 4: SOCIAL MEDIA STRATEGY ---
+- Best time to post
+- Hashtags (10-15 trending hashtags)
+- Caption for the post
+"""
+
 if not USER_COMMAND:
-    # Jodi user kono command na dey, tobei default prompt use hobe
-    prompt = """
-    Create a detailed YouTube Shorts AI video plan AND a full voiceover script.
-    Choose a creative, original, trending-style topic.
-    Include 5 cinematic scenes, AI image prompts, AI video prompts, title, description, hashtags.
-    Also write a 30-second voiceover script with a hook and call to action.
-    """
+    prompt = default_prompt
 else:
-    # Jodi user command dey, tahole setai prompt hishebe use hobe
-    prompt = USER_COMMAND
-    print(f"User Command Received: {prompt}")
+    prompt = f"""
+    {default_prompt}
+    
+    ADDITIONAL USER INSTRUCTION: {USER_COMMAND}
+    """
 
 url = (
     "https://generativelanguage.googleapis.com/v1beta/"
@@ -53,10 +86,11 @@ for attempt in range(max_retries):
             with open("daily_video_plan.txt", "w", encoding="utf-8") as file:
                 file.write(content)
 
+            # Script file a shudhu Section 2 rakha hocche jate copy korte shubidha hoy
             with open("daily_script.txt", "w", encoding="utf-8") as script_file:
                 script_file.write(content)
 
-            print("AI Content generated successfully!")
+            print("Full Production Plan with Voice-in-Prompt generated successfully!")
             break
             
     except Exception as e:
