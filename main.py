@@ -10,11 +10,10 @@ if not API_KEY:
 
 USER_COMMAND = os.environ.get("USER_PROMPT", "")
 
-# Ei prompt ta ekhon agent ke Google Flow er jonno ready kore dibe (with voice in prompt)
 default_prompt = """
-You are an expert AI Video Creator. Your job is to create a complete video production plan for a 30-second YouTube Short / TikTok / Instagram Reel.
+You are an expert AI Video Creator and Thumbnail Designer. Your job is to create a complete video production plan for a 30-second YouTube Short / TikTok / Instagram Reel.
 
-IMPORTANT: For Google Flow, you must create prompts that INCLUDE the voiceover/dialogue directly inside the prompt. Google Flow will generate the video AND the voice at the same time.
+IMPORTANT: For Google Flow, you must create prompts that INCLUDE the voiceover/dialogue directly inside the prompt. 
 
 Follow this exact structure:
 
@@ -31,10 +30,15 @@ Each prompt MUST include:
 - Format: "Prompt 1: [Visual Description] The character says: '[Exact voiceover text]'"
 - Keep each scene 3-5 seconds long.
 
-Example: 
-"Prompt 1: Close-up of a man looking at his phone with a shocked expression. He says: 'I can't believe this actually works!'"
+--- SECTION 3: THUMBNAIL DESIGN ---
+Provide 1 detailed thumbnail design for this video.
+Include:
+- Thumbnail Text (Short, punchy, max 4-5 words, big bold font)
+- Thumbnail Image Prompt (Detailed description for AI image generator like Midjourney or Leonardo AI)
+- Color Scheme (Which colors will pop on screen)
+- Emotion/Expression (What should the character's face look like?)
 
---- SECTION 3: CAPCUT EDITING GUIDE ---
+--- SECTION 4: CAPCUT EDITING GUIDE ---
 Provide a step-by-step guide on how to edit this in CapCut:
 - Order of clips
 - Recommended transitions (e.g., Zoom in, Fade)
@@ -42,7 +46,7 @@ Provide a step-by-step guide on how to edit this in CapCut:
 - Music suggestion (mood/genre)
 - Best export settings
 
---- SECTION 4: SOCIAL MEDIA STRATEGY ---
+--- SECTION 5: SOCIAL MEDIA STRATEGY ---
 - Best time to post
 - Hashtags (10-15 trending hashtags)
 - Caption for the post
@@ -86,11 +90,10 @@ for attempt in range(max_retries):
             with open("daily_video_plan.txt", "w", encoding="utf-8") as file:
                 file.write(content)
 
-            # Script file a shudhu Section 2 rakha hocche jate copy korte shubidha hoy
             with open("daily_script.txt", "w", encoding="utf-8") as script_file:
                 script_file.write(content)
 
-            print("Full Production Plan with Voice-in-Prompt generated successfully!")
+            print("Full Production Plan with Thumbnail Design generated successfully!")
             break
             
     except Exception as e:
