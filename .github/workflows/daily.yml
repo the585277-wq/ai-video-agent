@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       user_prompt:
-        description: 'Enter your command (e.g., Make a video about space)'     
+        description: 'Enter your command (e.g., Create a video about Hulk transformation)'     
         required: false
         default: 'Create a trending YouTube Shorts video plan and script.'
   schedule:
-    - cron: '0 12 * * *'
+    - cron: '0 12 * * *' # Protidin UTC dupur 12 tar (Bangladesh shondha 6 tar) somoy automatic run hobe
 
 jobs:
   run-agent:
