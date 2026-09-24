@@ -8,58 +8,58 @@ if not API_KEY:
     print("Error: GEMINI_API_KEY is missing!")
     exit(1)
 
+# GitHub Actions theke user er command neya hocche
 USER_COMMAND = os.environ.get("USER_PROMPT", "")
 
+# Default prompt (jodi user kono command na dey, tahole trending topic use hobe)
 default_prompt = """
-You are an expert AI Video Creator and Thumbnail Designer. Your job is to create a complete video production plan for a 30-second YouTube Short / TikTok / Instagram Reel.
-
-IMPORTANT: For Google Flow, you must create prompts that INCLUDE the voiceover/dialogue directly inside the prompt. 
+You are an expert AI Video Creator and Thumbnail Designer. Create a complete video production plan for a 30-second YouTube Short / TikTok / Instagram Reel.
 
 Follow this exact structure:
 
 --- SECTION 1: VIDEO IDEA ---
-1. Trending Topic: (A catchy topic)
-2. Video Title: (Engaging title)
-3. Target Audience: (Who will watch this)
+1. Trending Topic
+2. Video Title
+3. Target Audience
 
 --- SECTION 2: GOOGLE FLOW PROMPTS (With Voice) ---
-Provide 5 separate visual prompts that I can directly copy-paste into Google Flow. 
+Provide 5 separate visual prompts for Google Flow. 
 Each prompt MUST include:
 - Visual description (Cinematic, camera angles, lighting)
-- The exact VOICEOVER TEXT or DIALOGUE that should be spoken in that scene. 
+- The exact VOICEOVER TEXT or DIALOGUE spoken in that scene. 
 - Format: "Prompt 1: [Visual Description] The character says: '[Exact voiceover text]'"
-- Keep each scene 3-5 seconds long.
 
 --- SECTION 3: THUMBNAIL DESIGN ---
-Provide 1 detailed thumbnail design for this video.
+Provide 1 detailed thumbnail design.
 Include:
-- Thumbnail Text (Short, punchy, max 4-5 words, big bold font)
-- Thumbnail Image Prompt (Detailed description for AI image generator like Midjourney or Leonardo AI)
-- Color Scheme (Which colors will pop on screen)
-- Emotion/Expression (What should the character's face look like?)
+- Thumbnail Text (Max 4-5 words)
+- Thumbnail Image Prompt (Detailed for AI image generator)
+- Color Scheme
+- Emotion/Expression
 
 --- SECTION 4: CAPCUT EDITING GUIDE ---
-Provide a step-by-step guide on how to edit this in CapCut:
-- Order of clips
-- Recommended transitions (e.g., Zoom in, Fade)
-- Where to add text overlays
-- Music suggestion (mood/genre)
-- Best export settings
+Step-by-step guide for CapCut editing.
+- Order of clips, Transitions, Text overlays, Music suggestion, Export settings.
 
 --- SECTION 5: SOCIAL MEDIA STRATEGY ---
 - Best time to post
-- Hashtags (10-15 trending hashtags)
-- Caption for the post
+- Hashtags (10-15)
+- Caption
 """
 
-if not USER_COMMAND:
-    prompt = default_prompt
-else:
+# Jodi user command dey, tahole seta prompt hishebe use hobe
+if USER_COMMAND.strip() != "":
     prompt = f"""
     {default_prompt}
     
-    ADDITIONAL USER INSTRUCTION: {USER_COMMAND}
+    *** MOST IMPORTANT INSTRUCTION ***
+    The user has specifically requested the following topic: "{USER_COMMAND}"
+    You MUST create the entire video plan, script, and thumbnail based ONLY on this specific topic. 
+    Do NOT choose a random trending topic. 
+    Follow the user's command exactly.
     """
+else:
+    prompt = default_prompt
 
 url = (
     "https://generativelanguage.googleapis.com/v1beta/"
@@ -93,7 +93,7 @@ for attempt in range(max_retries):
             with open("daily_script.txt", "w", encoding="utf-8") as script_file:
                 script_file.write(content)
 
-            print("Full Production Plan with Thumbnail Design generated successfully!")
+            print("Video Plan generated successfully based on your command!")
             break
             
     except Exception as e:
